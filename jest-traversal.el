@@ -2,7 +2,7 @@
 (defconst jest--quotes '(?\' ?\" ?\`))
 (defconst jest--blank-line-begin "^[\t\s]*")
 
-(defun jest--get-buffer-to-point () 
+(defun jest--get-buffer-to-point ()
   (buffer-substring 1 (line-end-position)))
 
 (defun jest--check-template (character substitutes cb)
@@ -14,14 +14,13 @@
       (setq ele (cdr ele)))
     result))
 
-
 (defun jest--check-open-bracket (character)
   (jest--check-template character jest--brackets
-                    (lambda (ch) (car (car ch)))))
+                        (lambda (ch) (car (car ch)))))
 
 (defun jest--check-close-bracket (character)
   (jest--check-template character jest--brackets
-                    (lambda (ch) (car (cdr (car ch))))))
+                        (lambda (ch) (car (cdr (car ch))))))
 
 (defun jest--check-bracket-pair (open close)
   (catch 'result
@@ -32,7 +31,7 @@
 
 (defun jest--check-char-quote (character)
   (jest--check-template character jest--quotes
-                    (lambda (ch) (car ch))))
+                        (lambda (ch) (car ch))))
 
 (defun jest--is-in-quotes (stack)
   (if (car stack)
@@ -53,15 +52,15 @@
 (defun jest--remove-ranges (text list-to-del)
   (if (> (length list-to-del) 0)
       (let ()
-      (jest--remove-ranges (concat (substring text 0 (+ 1 (car (car list-to-del))))
-                                   (substring text (car (cdr (car list-to-del)))))
-                           (cdr list-to-del)))
+        (jest--remove-ranges (concat (substring text 0 (+ 1 (car (car list-to-del))))
+                                     (substring text (car (cdr (car list-to-del)))))
+                             (cdr list-to-del)))
     text))
 
 ;; todo remove text closed with pairs but need to remain complete string
 ;; 1 : When meet Quotes.
 ;;      If it's same quotes, pop from stack
-;            if not, Inside quotes ignore. If not inside quote, add to stack.
+                                        ;            if not, Inside quotes ignore. If not inside quote, add to stack.
 ;; 2 : When meet bracket
 ;;      If it's inside quotes, do nothing.
 ;; 2-1:   If not inside quotes and opening braket
@@ -69,7 +68,7 @@
 ;; 2-2: ... and closing braket
 ;;        remove from stack and add list do delete with opening braket index.
 ;;              If the last inserted in list is collapsed with current one, remove last one and add.
-(defun jest--remove-folded-range (text) 
+(defun jest--remove-folded-range (text)
   (let ((stack '())
         (list-to-del '())
         (edited text))
@@ -93,21 +92,20 @@
             (setq stack (cdr stack)))))))
     (jest--remove-ranges text list-to-del)))
 
-
 (defun jest--current-describe-name (desc-names text)
   (if (or (string-match (concat jest--blank-line-begin "describe\(\'\\(.*?\\)\'") text)
           (string-match (concat jest--blank-line-begin "describe\(\"\\(.*?\\)\"") text))
       (let ((describe-name (match-string 1 text)))
         (jest--current-describe-name (if (> (length desc-names) 0)
-                              (concat desc-names " " describe-name)
-                            describe-name)
-                          (substring text (match-beginning 1))))
+                                         (concat desc-names " " describe-name)
+                                       describe-name)
+                                     (substring text (match-beginning 1))))
     desc-names))
 
 (defun jest--current-test-fun-param (text)
   (when (or (string-match (concat jest--blank-line-begin "\\(test\\|it\\)\(\'\\(.*?\\)\'") text)
-          (string-match (concat jest--blank-line-begin "\\(test\\|it\\)\(\"\\(.*?\\)\"") text))
-      (match-string 2 text)))
+            (string-match (concat jest--blank-line-begin "\\(test\\|it\\)\(\"\\(.*?\\)\"") text))
+    (match-string 2 text)))
 
 (defun jest--current-test-name ()
   (let ((text (jest--get-buffer-to-point)))
