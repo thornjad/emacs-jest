@@ -556,29 +556,6 @@ This goes from pointer position upwards."
 
 (add-hook 'comint-preoutput-filter-functions #'jest-clear-buffer-after-test-end)
 
-
-
-(defcustom jest-compile-command 'jest-popup
-  "Command to run when compile and friends are called."
-  :group 'jest
-  :type 'function)
-
-(defcustom jest-repeat-compile-command 'jest-repeat
-  "Command to run when recompile and friends are called."
-  :group 'jest
-  :type 'function)
-
-;;;###autoload
-(define-minor-mode jest-minor-mode
-  "Minor mode to run jest-mode commands for compile and friends."
-  :lighter " Jest"
-  :keymap (let ((jest-minor-mode-keymap (make-sparse-keymap)))
-            (define-key jest-minor-mode-keymap [remap compile] jest-compile-command)
-            (define-key jest-minor-mode-keymap [remap recompile] jest-repeat-compile-command)
-            (define-key jest-minor-mode-keymap [remap projectile-test-project] jest-compile-command)
-            (define-key jest-minor-mode-keymap (kbd "C-c ;") 'jest-file-dwim)
-            jest-minor-mode-keymap))
-
 (provide 'jest)
 
 ;;; jest.el ends here
