@@ -1,25 +1,13 @@
 #+TITLE: jest.el
-[[https://melpa.org/#/jest][file:https://melpa.org/packages/jest-badge.svg]]
-
-Credit: [[https://github.com/wbolster/emacs-python-pytest][emacs-python-pytest]]
 
 This package provides helpers to run jest.
 
-* Installation
-~jest.el~ is available from melpa.
+This is a fork of [[https://github.com/edmundmiller/emacs-jest][Edmund Miller's jest.el package]], with fixes and updates that allow it to actually work in the repositories I need it in. Because this is a personal fork, I don't really bother writing new tests and fixes are aimed toward Typescript primarily.
 
-With ~use-package~:
-#+BEGIN_SRC elisp
-(use-package jest)
-#+END_SRC
-Manually:
-#+BEGIN_SRC
-M-x package-install RET jest RET
-#+END_SRC
 * Overview
-The main command is jest-popup, which will show a
-dispatcher menu, making it easy to change various options and
-switches, and then run jest using one of the actions.
+The main command is jest-popup, which will show a dispatcher menu, making it easy to change various
+options and switches, and then run jest using one of the actions.
+
 - jest (run all tests)
 - jest-file (current file)
 - jest-file-dwim (‘Do what I mean’ for current file)
@@ -28,57 +16,6 @@ switches, and then run jest using one of the actions.
 - jest-last-failed (rerun previous failures)
 - jest-repeat (repeat last invocation)
 
-A prefix argument causes the generated command line to be offered
-for editing, and various customization options influence how some
-of the commands work. See the README.org for detailed information.
-
-* Jest Minor Mode
-Jest minor mode binds compilation-related commands such as =compile-command= and
-=recompile-command= to Jest commands, so that, for example =C-c <RET>=
-(=compile=) runs =jest-popup= and =C-c C-<RET>= (=recompile=) runs
-=jest-repeat=. The commands to run are configurable.
-
-#+begin_src el
-(use-package jest
-  :after (js2-mode)
-  :hook (js2-mode . jest-minor-mode))
-#+end_src
-
-* Jest Popup
-#+BEGIN_SRC
-Switches
- -b bail (--bail)
- -c colors (--colors)
- -C coverage (--coverage)
- -d run doctests (--doctest-modules)
- -D debug jest config (--debug)
- -e expand (--expand)
- -f force exit (--forceExit)
- -l last commit (--lastCommit)
- -o only changed (--onlyChanged)
- -s silent (--silent)
- -v verbose (--verbose)
- -w watch (--watch)
- -W watch all (--watchAll)
-
-Options
- =c config file (--config=)
- =k only names matching expression (-t)
- =p only files matching expression (--testPathPattern )
- =P only files not matching expression (--testPathIgnorePatterns )
- =o output file (--outputFile=)
- =x exit after N failures or errors (--maxfail=)
-
-Run tests
- t Test all            x Test last-failed
-
-Run tests for current context
- f Test file           F Test this file
- d Test function
-
-Repeat tests
- r Repeat last test run
-#+END_SRC
-
-* Contributing
-Please create a [[https://github.com/Emiller88/emacs-jest/issues/new][new issue]] or [[https://github.com/Emiller88/emacs-jest/compare][submit a PR]].
+A prefix argument causes the generated command line to be offered for editing, and various
+customization options influence how some of the commands work. See the README.org for detailed
+information.
