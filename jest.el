@@ -48,7 +48,7 @@
 (require 'jest-traversal)
 
 (defgroup jest nil
-  "jest integration"
+  "Jest integration"
   :group 'js
   :prefix "jest-")
 
@@ -92,14 +92,6 @@ When t, this toggles the behaviour of the prefix argument."
   "Whether to include the project name in the buffer name.
 
 This is useful when working on multiple projects simultaneously."
-  :group 'jest
-  :type 'boolean)
-
-;; TODO Find JS cli debugger
-(defcustom jest-pdb-track t
-  "Whether to automatically track output when pdb is spawned.
-
-This results in automatically opening source files during debugging."
   :group 'jest
   :type 'boolean)
 
