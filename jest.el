@@ -64,7 +64,7 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'jest
   :type 'boolean)
 
-(defcustom jest-executable "npm test --"
+(defcustom jest-executable "npx --no-install jest --"
   "The name of the jest executable."
   :group 'jest
   :type 'string)
