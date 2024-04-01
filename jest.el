@@ -209,22 +209,6 @@ With a prefix argument, allow editing."
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun jest-file-dwim (file &optional args)
-  "Run jest on FILE, intelligently finding associated test modules.
-
-When run interactively, this tries to work sensibly using
-the current file.
-
-Additional ARGS are passed along to jest.
-With a prefix argument, allow editing."
-  (interactive
-   (list
-    (buffer-file-name)
-    (jest-arguments)))
-  (jest-file (jest--sensible-test-file file) args))
-
-
-;;;###autoload
 (defun jest-function (file testname &optional args)
   "Run jest on the test function where pointer is located.
 
@@ -235,7 +219,6 @@ When pointer is not inside a test function jest is run on the whole file."
    :args args
    :file file
    :testname testname))
-
 
 ;;;###autoload
 (defun jest-last-failed (&optional args)
@@ -302,7 +285,7 @@ With a prefix ARG, allow editing."
 
 (cl-defun jest--run-command (&key command popup-arguments edit)
   "Run a jest command line."
-  (jest--maybe-save-buffers)
+  (save-some-buffers)
   (let* ((default-directory (jest--project-root)))
     (when jest-confirm
       (setq edit (not edit)))
@@ -456,51 +439,6 @@ If FILE is not found in DIRECTORY, the parent of DIRECTORY will be searched."
   (let ((default-directory (jest--project-root)))
     (file-relative-name file)))
 
-(defun jest--test-file-p (file)
-  "Tell whether FILE is a test file."
-  (projectile-test-file-p file))
-
-(defun jest--find-test-file (file)
-  "Find a test file associated to FILE, if any."
-  (let ((test-file (projectile-find-matching-test file)))
-    (unless test-file
-      (user-error "No test file found"))
-    test-file))
-
-(defun jest--sensible-test-file (file)
-  "Return a sensible test file name for FILE."
-  (if (jest--test-file-p file)
-      (jest--relative-file-name file)
-    (jest--find-test-file file)))
-
-(defun jest--maybe-save-buffers ()
-  "Maybe save modified buffers."
-  (cond
-   ((memq jest-unsaved-buffers-behavior '(ask-current save-current))
-    ;; check only current buffer
-    (when (and (buffer-modified-p)
-               (or (eq jest-unsaved-buffers-behavior 'save-current)
-                   (y-or-n-p
-                    (format "Save modified buffer (%s)? " (buffer-name)))))
-      (save-buffer)))
-   ((memq jest-unsaved-buffers-behavior '(ask-all save-all))
-    ;; check all project buffers
-    (-when-let*
-        ((buffers
-          (projectile-buffers-with-file (projectile-project-buffers)))
-         (modified-buffers
-          (-filter 'buffer-modified-p buffers))
-         (confirmed
-          (or (eq jest-unsaved-buffers-behavior 'save-all)
-              (y-or-n-p
-               (format "Save modified project buffers (%d)? "
-                       (length modified-buffers))))))
-      (--each modified-buffers
-        (with-current-buffer it
-          (save-buffer)))))
-   (t nil)))
-
-
 ;; functions to inspect/navigate the javascript source code
 (defun jest--current-testname ()
   "Return the testname where pointer is located.
@@ -516,8 +454,6 @@ Testname is defined by enclosing ~describe~ calls and ~it~/~test~ calls."
           (let ((funcparam (jest--function-first-param-string call)))
             (setq testname (format "%s %s" funcparam testname))))))
     (unless (string= testname "") (string-trim testname))))
-
-
 
 (defun jest--list-named-calls-upwards ()
   "List functions call nodes where function has a name.
