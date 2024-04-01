@@ -218,7 +218,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
         (current-buffer)  ;; re-use buffer
       (let ((name jest-buffer-name))
         (when jest-project-name-in-buffer-name
-          (setq name (format "%s<%s>" name (jest--project-name))))
+          (setq name (format "%s<%s>" name (project-name (project-current)))))
         (get-buffer-create name)))))
 
 (defun jest--process-sentinel (proc _state)
@@ -275,21 +275,6 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 
 ;; file/directory helpers
-
-(defun jest--read-package-json (file)
-  "File to read package json for a project"
-  (json-parse-string
-   (with-temp-buffer
-     (insert-file-contents (jest--find-package-json file))
-     (buffer-string))))
-
-(defun jest--find-package-json (file)
-  "Find the package.json associated with a given file"
-  (locate-dominating-file file "package.json"))
-
-(defun jest--project-name ()
-  "Find the project name."
-  (gethash "name" (jest--read-package-json buffer-file-name)))
 
 (defun jest--relative-file-name (file)
   "Make FILE relative to the project root."
