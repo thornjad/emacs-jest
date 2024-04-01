@@ -5,7 +5,7 @@
 ;; URL:  https://github.com/thornjad/emacs-jest/
 ;; Version: 0.2.0
 ;; Keywords: jest, javascript, testing
-;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (magit-popup "2.12.0") (projectile "0.14.0") (s "1.12.0") (js2-mode "20180301") (cl-lib "0.6.1"))
+;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (magit-popup "2.12.0") (s "1.12.0") (js2-mode "20180301") (cl-lib "0.6.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -44,7 +44,6 @@
 
 (require 'dash)
 (require 'magit-popup)
-(require 'projectile)
 (require 's)
 (require 'jest-traversal)
 
