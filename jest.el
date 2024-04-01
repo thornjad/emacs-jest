@@ -138,6 +138,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   "Major mode for jest sessions (derived from comint-mode)."
   (make-variable-buffer-local 'comint-prompt-read-only)
   (setq-default comint-prompt-read-only nil)
+  (setq buffer-read-only t)
   (compilation-setup t))
 
 (cl-defun jest--run (&key args file testname edit)
@@ -184,26 +185,25 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   (let* ((buffer (jest--get-buffer))
          (process (get-buffer-process buffer)))
     (with-current-buffer buffer
-      (when (comint-check-proc buffer)
-        (unless (or compilation-always-kill
-                    (yes-or-no-p "Kill running jest process?"))
-          (user-error "Aborting; jest still running")))
-      (when process
-        (delete-process process))
-      (erase-buffer)
-      (unless (eq major-mode 'jest-mode)
-        (jest-mode))
-      (compilation-forget-errors)
-      (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
-      (make-local-variable 'jest-arguments)
-      (setq jest--current-command command
-            jest-arguments popup-arguments)
-      (run-hooks 'jest-setup-hook)
-      (make-comint-in-buffer "jest" buffer "sh" nil "-c" command)
-      (run-hooks 'jest-started-hook)
-      (setq process (get-buffer-process buffer))
-      (set-process-sentinel process #'jest--process-sentinel)
-      (display-buffer buffer))))
+      (let ((inhibit-read-only t))
+        (when (comint-check-proc buffer)
+          (unless (or compilation-always-kill (yes-or-no-p "Kill running jest process?"))
+            (user-error "Aborting; jest still running")))
+        (when process (delete-process process))
+        (erase-buffer)
+        (unless (eq major-mode 'jest-mode)
+          (jest-mode))
+        (compilation-forget-errors)
+        (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
+        (make-local-variable 'jest-arguments)
+        (setq jest--current-command command
+              jest-arguments popup-arguments)
+        (run-hooks 'jest-setup-hook)
+        (make-comint-in-buffer "jest" buffer "sh" nil "-c" command)
+        (run-hooks 'jest-started-hook)
+        (setq process (get-buffer-process buffer))
+        (set-process-sentinel process #'jest--process-sentinel)
+        (display-buffer buffer)))))
 
 (defun jest--shell-quote (s)
   "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
@@ -324,16 +324,15 @@ This goes from pointer position upwards."
       (js2-string-node-value first-param))))
 
 (defun jest-clear-buffer-after-test-end (inserted-string)
-  (let
-      ((test-end-regex  ".*?Test Suites:.+\nTests:  .+\nSnapshots: .+\nTime:  .+\nRan all test suites.+\n.*?"))
+  (let ((test-end-regex
+         ".*?Test Suites:.+\nTests:  .+\nSnapshots: .+\nTime:  .+\nRan all test suites.+\n.*?")
+        (inhibit-read-only t))
     (when (and (s-contains? "*jest*"
                             (buffer-name))
                (s-matches? test-end-regex (buffer-string)))
       (beginning-of-buffer)
       (comint-clear-buffer))
     inserted-string))
-
-
 (add-hook 'comint-preoutput-filter-functions #'jest-clear-buffer-after-test-end)
 
 
