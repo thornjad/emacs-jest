@@ -237,7 +237,7 @@ With a prefix argument, allow editing."
 With a prefix ARG, allow editing."
   (interactive)
   (let ((command (gethash
-                  (jest--project-root)
+                  (project-root (project-current))
                   jest--project-last-command)))
     (when jest--current-command
       ;; existing jest-mode buffer; reuse command
@@ -285,7 +285,7 @@ With a prefix ARG, allow editing."
 (cl-defun jest--run-command (&key command popup-arguments edit)
   "Run a jest command line."
   (save-some-buffers)
-  (let* ((default-directory (jest--project-root)))
+  (let* ((default-directory (project-root (project-current))))
     (when jest-confirm
       (setq edit (not edit)))
     (when edit
@@ -295,7 +295,7 @@ With a prefix ARG, allow editing."
              command nil nil 'jest--history)))
     (add-to-history 'jest--history command)
     (setq jest--history (-uniq jest--history))
-    (puthash (jest--project-root) command
+    (puthash (project-root (project-current)) command
              jest--project-last-command)
     (jest--run-as-comint
      :command command
@@ -400,42 +400,24 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 (defun jest--read-package-json (file)
   "File to read package json for a project"
-  (json-parse-string (with-temp-buffer
-                       (insert-file-contents (jest--find-package-json file))
-                       (buffer-string))))
-
-(defun jest--file-search-upward (directory file)
-  "Search DIRECTORY for FILE and return its full path if found, or NIL if not.
-
-If FILE is not found in DIRECTORY, the parent of DIRECTORY will be searched."
-  (let ((parent-dir (file-truename (concat (file-name-directory directory) "../")))
-        (current-path (if (not (string= (substring directory (- (length directory) 1)) "/"))
-                          (concat directory "/" file)
-                        (concat directory file))))
-    (if (file-exists-p current-path)
-        current-path
-      (when (and (not (string= (file-truename directory) parent-dir))
-                 (< (length parent-dir) (length (file-truename directory))))
-        (jest--file-search-upward parent-dir file)))))
+  (json-parse-string
+   (with-temp-buffer
+     (insert-file-contents (jest--find-package-json file))
+     (buffer-string))))
 
 (defun jest--find-package-json (file)
   "Find the package.json associated with a given file"
-  (jest--file-search-upward (file-name-directory file) "package.json"))
+  (locate-dominating-file file "package.json"))
 
 (defun jest--project-name ()
   "Find the project name."
   (gethash "name" (jest--read-package-json buffer-file-name)))
 
-(defun jest--project-root ()
-  "Find the project root directory."
-  (interactive)
-  (file-name-directory (jest--find-package-json buffer-file-name)))
-
 (defun jest--relative-file-name (file)
   "Make FILE relative to the project root."
   ;; Note: setting default-directory gives different results
   ;; than providing a second argument to file-relative-name.
-  (let ((default-directory (jest--project-root)))
+  (let ((default-directory (project-root (project-current))))
     (file-relative-name file)))
 
 ;; functions to inspect/navigate the javascript source code
