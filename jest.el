@@ -349,7 +349,6 @@ This goes from pointer position upwards."
   '((?b "bail" "--bail")
     (?c "colors" "--colors" t)
     (?C "coverage" "--coverage")
-    (?d "run doctests" "--doctest-modules")
     (?D "debug jest config" "--debug")
     (?e "expand" "--expand")
     (?f "force exit" "--forceExit")
