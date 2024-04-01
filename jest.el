@@ -1,13 +1,15 @@
 ;;; jest.el --- helpers to run jest -*- lexical-binding: t; -*-
+
+;; Author: Jade Michael Thornton
 ;; Author: Edmund Miller <edmund.a.miller@gmail.com>
-;; URL:  https://github.com/emiller88/emacs-jest/
-;; Version: 0.1.0
+;; URL:  https://github.com/thornjad/emacs-jest/
+;; Version: 0.2.0
 ;; Keywords: jest, javascript, testing
 ;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (magit-popup "2.12.0") (projectile "0.14.0") (s "1.12.0") (js2-mode "20180301") (cl-lib "0.6.1"))
 
-;; This file is part of GNU Emacs.
+;; This file is not part of GNU Emacs.
 
-;; GNU Emacs is free software: you can redistribute it and/or modify
+;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
@@ -16,9 +18,6 @@
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -38,6 +37,7 @@
 ;; of the commands work. See the README.org for detailed information.
 
 ;;; Code:
+
 (require 'comint)
 (require 'compile)
 (require 'js2-mode)
@@ -283,7 +283,7 @@ With a prefix ARG, allow editing."
 (cl-defun jest--run (&key args file testname edit)
   "Run jest for the given arguments."
   (let ((popup-arguments args)
-	command)
+	      command)
     (setq args (jest--transform-arguments args))
     (when (and file (file-name-absolute-p file))
       (setq file (jest--relative-file-name file)))
@@ -293,12 +293,12 @@ With a prefix ARG, allow editing."
     (when testname
       (setq args (-snoc args "--testNamePattern" (jest--shell-quote testname))))
 
-      (setq args (cons jest-executable args) command (s-join " " args))
+    (setq args (cons jest-executable args) command (s-join " " args))
 
-      (jest--run-command
-       :command command
-       :popup-arguments popup-arguments
-       :edit edit)))
+    (jest--run-command
+     :command command
+     :popup-arguments popup-arguments
+     :edit edit)))
 
 (cl-defun jest--run-command (&key command popup-arguments edit)
   "Run a jest command line."
@@ -413,14 +413,14 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
    (s-chop-prefix "_" it)
    (format "test_%s" it)))
 
-
+
 ;; file/directory helpers
 
 (defun jest--read-package-json (file)
   "File to read package json for a project"
   (json-parse-string (with-temp-buffer
-    (insert-file-contents (jest--find-package-json file))
-    (buffer-string))))
+                       (insert-file-contents (jest--find-package-json file))
+                       (buffer-string))))
 
 (defun jest--file-search-upward (directory file)
   "Search DIRECTORY for FILE and return its full path if found, or NIL if not.
@@ -428,13 +428,13 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 If FILE is not found in DIRECTORY, the parent of DIRECTORY will be searched."
   (let ((parent-dir (file-truename (concat (file-name-directory directory) "../")))
         (current-path (if (not (string= (substring directory (- (length directory) 1)) "/"))
-                         (concat directory "/" file)
-                         (concat directory file))))
+                          (concat directory "/" file)
+                        (concat directory file))))
     (if (file-exists-p current-path)
         current-path
-        (when (and (not (string= (file-truename directory) parent-dir))
-                   (< (length parent-dir) (length (file-truename directory))))
-          (jest--file-search-upward parent-dir file)))))
+      (when (and (not (string= (file-truename directory) parent-dir))
+                 (< (length parent-dir) (length (file-truename directory))))
+        (jest--file-search-upward parent-dir file)))))
 
 (defun jest--find-package-json (file)
   "Find the package.json associated with a given file"
@@ -545,7 +545,7 @@ This goes from pointer position upwards."
 
 (defun jest-clear-buffer-after-test-end (inserted-string)
   (let
-  ((test-end-regex  ".*?Test Suites:.+\nTests:  .+\nSnapshots: .+\nTime:  .+\nRan all test suites.+\n.*?"))  
+      ((test-end-regex  ".*?Test Suites:.+\nTests:  .+\nSnapshots: .+\nTime:  .+\nRan all test suites.+\n.*?"))
     (when (and (s-contains? "*jest*"
                             (buffer-name))
                (s-matches? test-end-regex (buffer-string)))
@@ -556,7 +556,7 @@ This goes from pointer position upwards."
 
 (add-hook 'comint-preoutput-filter-functions #'jest-clear-buffer-after-test-end)
 
-;;
+
 
 (defcustom jest-compile-command 'jest-popup
   "Command to run when compile and friends are called."
@@ -580,4 +580,5 @@ This goes from pointer position upwards."
             jest-minor-mode-keymap))
 
 (provide 'jest)
+
 ;;; jest.el ends here
