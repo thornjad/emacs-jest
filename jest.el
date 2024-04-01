@@ -127,121 +127,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar-local jest--current-command nil
   "Current command; used in jest-mode buffers.")
 
-(fmakunbound 'jest-popup)
-(makunbound 'jest-popup)
-
-;;;###autoload (autoload 'jest-popup "jest" nil t)
-(magit-define-popup jest-popup
-  "Show popup for running jest."
-  'jest
-  :switches
-  '((?b "bail" "--bail")
-    (?c "colors" "--colors" t)
-    (?C "coverage" "--coverage")
-    (?d "run doctests" "--doctest-modules")
-    (?D "debug jest config" "--debug")
-    (?e "expand" "--expand")
-    (?f "force exit" "--forceExit")
-    (?l "last commit" "--lastCommit")
-    ;; (?p "debug on error" "--pdb")
-    (?o "only changed" "--onlyChanged")
-    (?s "silent" "--silent")
-    ;; (?s "do not capture output" "--capture=no")
-    ;; (?t "do not cut tracebacks" "--full-trace")
-    (?v "verbose" "--verbose")
-    ;;--watch
-    (?w "watch" "--watch")
-    (?W "watch all" "--watchAll"))
-  :options
-  '((?c "config file" "--config=")
-    (?k "only names matching expression" "-t")
-    (?p "only files matching expression" "--testPathPattern ")
-    (?P "only files not matching expression" "--testPathIgnorePatterns ")
-    ;; (?m "only marks matching expression" "-m")
-    (?o "output file" "--outputFile=")
-    ;; (?t "traceback style" "--tb=" jest--choose-traceback-style)
-    (?x "exit after N failures or errors" "--maxfail="))
-  :actions
-  '("Run tests"
-    (?t "Test all" jest)
-    (?x "Test last-failed" jest-last-failed)
-    "Run tests for current context"
-    (?f "Test file" jest-file-dwim)
-    (?F "Test this file  " jest-file)
-    (?d "Test function " jest-function)
-    "Repeat tests"
-    (?r "Repeat last test run" jest-repeat))
-  :max-action-columns 2
-  :default-action 'jest-repeat)
-
-;;;###autoload
-(defun jest (&optional args)
-  "Run jest with ARGS.
-
-With a prefix argument, allow editing."
-  (interactive (list (jest-arguments)))
-  (jest--run
-   :args args
-   :edit current-prefix-arg))
-
-;;;###autoload
-(defun jest-file (file &optional args)
-  "Run jest on FILE, using ARGS.
-
-Additional ARGS are passed along to jest.
-With a prefix argument, allow editing."
-  (interactive
-   (list
-    (buffer-file-name)
-    (jest-arguments)))
-  (jest--run
-   :args args
-   :file file
-   :edit current-prefix-arg))
-
-;;;###autoload
-(defun jest-function (file testname &optional args)
-  "Run jest on the test function where pointer is located.
-
-When pointer is not inside a test function jest is run on the whole file."
-  (interactive
-   (list (buffer-file-name) (jest--current-test-name) (jest-arguments)))
-  (jest--run
-   :args args
-   :file file
-   :testname testname))
-
-;;;###autoload
-(defun jest-last-failed (&optional args)
-  "Run jest, only executing previous test failures.
-
-Additional ARGS are passed along to jest.
-With a prefix argument, allow editing."
-  (interactive (list (jest-arguments)))
-  (jest--run
-   :args (-snoc args "--last-failed")
-   :edit current-prefix-arg))
-
-;;;###autoload
-(defun jest-repeat ()
-  "Run jest with the same argument as the most recent invocation.
-
-With a prefix ARG, allow editing."
-  (interactive)
-  (let ((command (gethash
-                  (project-root (project-current))
-                  jest--project-last-command)))
-    (when jest--current-command
-      ;; existing jest-mode buffer; reuse command
-      (setq command jest--current-command))
-    (unless command
-      (user-error "No previous jest run for this project"))
-    (jest--run-command
-     :command command
-     :popup-arguments jest-arguments
-     :edit current-prefix-arg)))
-
-
+
 ;; internal helpers
 
 (fmakunbound 'jest-mode)
@@ -464,6 +350,117 @@ This goes from pointer position upwards."
 
 
 (add-hook 'comint-preoutput-filter-functions #'jest-clear-buffer-after-test-end)
+
+
+
+;; Clean up jest-popup if it's already run before
+(fmakunbound 'jest-popup)
+(makunbound 'jest-popup)
+
+;;;###autoload (autoload 'jest-popup "jest" nil t)
+(magit-define-popup jest-popup
+  "Show popup for running jest."
+  'jest
+  :switches
+  '((?b "bail" "--bail")
+    (?c "colors" "--colors" t)
+    (?C "coverage" "--coverage")
+    (?d "run doctests" "--doctest-modules")
+    (?D "debug jest config" "--debug")
+    (?e "expand" "--expand")
+    (?f "force exit" "--forceExit")
+    (?l "last commit" "--lastCommit")
+    (?o "only changed" "--onlyChanged")
+    (?s "silent" "--silent")
+    (?v "verbose" "--verbose")
+    (?w "watch" "--watch")
+    (?W "watch all" "--watchAll"))
+  :options
+  '((?c "config file" "--config=")
+    (?k "only names matching expression" "-t")
+    (?p "only files matching expression" "--testPathPattern ")
+    (?P "only files not matching expression" "--testPathIgnorePatterns ")
+    (?o "output file" "--outputFile=")
+    (?x "exit after N failures or errors" "--maxfail="))
+  :actions
+  '("Run tests"
+    (?t "Test all" jest)
+    (?x "Test last-failed" jest-last-failed)
+    "Run tests for current context"
+    (?f "Test file" jest-file-dwim)
+    (?F "Test this file  " jest-file)
+    (?d "Test function " jest-function)
+    "Repeat tests"
+    (?r "Repeat last test run" jest-repeat))
+  :max-action-columns 2
+  :default-action 'jest-repeat)
+
+;;;###autoload
+(defun jest (&optional args)
+  "Run jest with ARGS.
+
+With a prefix argument, allow editing."
+  (interactive (list (jest-arguments)))
+  (jest--run
+   :args args
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun jest-file (file &optional args)
+  "Run jest on FILE, using ARGS.
+
+Additional ARGS are passed along to jest.
+With a prefix argument, allow editing."
+  (interactive
+   (list
+    (buffer-file-name)
+    (jest-arguments)))
+  (jest--run
+   :args args
+   :file file
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun jest-function (file testname &optional args)
+  "Run jest on the test function where pointer is located.
+
+When pointer is not inside a test function jest is run on the whole file."
+  (interactive
+   (list (buffer-file-name) (jest--current-test-name) (jest-arguments)))
+  (jest--run
+   :args args
+   :file file
+   :testname testname))
+
+;;;###autoload
+(defun jest-last-failed (&optional args)
+  "Run jest, only executing previous test failures.
+
+Additional ARGS are passed along to jest.
+With a prefix argument, allow editing."
+  (interactive (list (jest-arguments)))
+  (jest--run
+   :args (-snoc args "--last-failed")
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun jest-repeat ()
+  "Run jest with the same argument as the most recent invocation.
+
+With a prefix ARG, allow editing."
+  (interactive)
+  (let ((command (gethash
+                  (project-root (project-current))
+                  jest--project-last-command)))
+    (when jest--current-command
+      ;; existing jest-mode buffer; reuse command
+      (setq command jest--current-command))
+    (unless command
+      (user-error "No previous jest run for this project"))
+    (jest--run-command
+     :command command
+     :popup-arguments jest-arguments
+     :edit current-prefix-arg)))
 
 (provide 'jest)
 
