@@ -147,9 +147,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
       (setq file (jest--relative-file-name file)))
 
     (when file
-      (setq args (-snoc args (jest--shell-quote file))))
+      (setq args (-snoc args (shell-quote-argument file))))
     (when testname
-      (setq args (-snoc args "--testNamePattern" (jest--shell-quote testname))))
+      (setq args (-snoc args "--testNamePattern" (shell-quote-argument testname))))
 
     (setq args (cons jest-executable args) command (s-join " " args))
 
@@ -209,12 +209,6 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     (when (string-match "^[\t\s]*\\(?:test\\|it\\|describe\\)\([\'\"]\\(.*?\\)[\'\"]" text)
       (match-string 1 text))))
 
-(defun jest--shell-quote (s)
-  "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
-  (if (s-equals-p s (shell-quote-argument s))
-      s
-    (format "'%s'" (s-replace "'" "'\"'\"'" s))))
-
 (defun jest--get-buffer ()
   "Get a create a suitable compilation buffer."
   (magit-with-pre-popup-buffer
@@ -254,7 +248,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
      (--> s
           (substring it (length option))
           (s-trim it)
-          (jest--shell-quote it)
+          (shell-quote-argument it)
           (format "%s %s" option it)))
    args))
 
