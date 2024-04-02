@@ -38,14 +38,14 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+(require 'dash)
+(require 's)
+
 (require 'comint)
 (require 'compile)
 (require 'js2-mode)
-
-(require 'dash)
 (require 'magit-popup)
-(require 's)
-(require 'jest-traversal)
 
 (defgroup jest nil
   "Jest integration"
@@ -204,6 +204,13 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
         (setq process (get-buffer-process buffer))
         (set-process-sentinel process #'jest--process-sentinel)
         (display-buffer buffer)))))
+
+(defun jest--closest-test-name ()
+  (let ((text (string-join
+               (reverse (split-string (buffer-substring-no-properties 1 (line-end-position)) "\n"))
+               "\n")))
+    (when (string-match "^[\t\s]*\\(?:test\\|it\\|describe\\)\([\'\"]\\(.*?\\)[\'\"]" text)
+      (match-string 1 text))))
 
 (defun jest--shell-quote (s)
   "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
@@ -409,7 +416,7 @@ With a prefix argument, allow editing."
 
 When pointer is not inside a test function jest is run on the whole file."
   (interactive
-   (list (buffer-file-name) (jest--current-test-name) (jest-arguments)))
+   (list (buffer-file-name) (jest--closest-test-name) (jest-arguments)))
   (jest--run
    :args args
    :file file
