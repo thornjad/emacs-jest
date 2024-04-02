@@ -1,18 +1,17 @@
-;;; jest.el --- helpers to run jest -*- lexical-binding: t; -*-
+;;; Jest.el --- helpers to run jest -*- lexical-binding: t; -*-
 
 ;; Author: Jade Michael Thornton
 ;; Based on work by Edmund Miller
 ;; URL:  https://github.com/thornjad/emacs-jest/
 ;; Version: 0.2.0
-;; Keywords: jest, javascript, testing
-;; Package-Requires: ((emacs "24.4") (dash "2.19.1") (magit-popup "2.13.3") (s "1.13.0") (js2-mode "20231224"))
+;; Keywords: tools
+;; Package-Requires: ((emacs "29.1") (dash "2.19.1") (magit-popup "2.13.3") (s "1.13.0") (js2-mode "20231224"))
 
 ;; This file is not part of GNU Emacs.
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; the Free Software Foundation, version 3 of the License.
 
 ;; GNU Emacs is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -339,6 +338,7 @@ This goes from pointer position upwards."
 (fmakunbound 'jest-popup)
 (makunbound 'jest-popup)
 
+;; TODO switch to transient
 ;;;###autoload (autoload 'jest-popup "jest" nil t)
 (magit-define-popup jest-popup
   "Show popup for running jest."
