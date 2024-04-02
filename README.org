@@ -2,7 +2,7 @@
 
 This package provides helpers to run jest.
 
-This is a fork of [[https://github.com/edmundmiller/emacs-jest][Edmund Miller's jest.el package]], with fixes and updates that allow it to actually work in the repositories I need it in. Because this is a personal fork, I don't really bother writing new tests and fixes are aimed toward Typescript primarily.
+This package is based on [[https://github.com/edmundmiller/emacs-jest][Edmund Miller's jest.el package]], with significant fixes and changes that allow it to actually work in the repositories I need it in. Because this is a personal fork, I don't really bother writing new tests and fixes are aimed toward Typescript primarily. Please log issues and open pull requests if you find any problems.
 
 * Overview
 The main command is jest-popup, which will show a dispatcher menu, making it easy to change various
@@ -10,8 +10,7 @@ options and switches, and then run jest using one of the actions.
 
 - jest (run all tests)
 - jest-file (current file)
-- jest-function (the test function where the pointer is now,
-  fallback to current file)
+- jest-test (the nearest =it=, =test= or =describe= to where the pointer is now)
 - jest-last-failed (rerun previous failures)
 - jest-repeat (repeat last invocation)
 
