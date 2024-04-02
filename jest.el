@@ -370,7 +370,7 @@ This goes from pointer position upwards."
     "Run tests for current context"
     (?f "Test file" jest-file-dwim)
     (?F "Test this file  " jest-file)
-    (?d "Test function " jest-function)
+    (?d "Test nearest it/describe " jest-test)
     "Repeat tests"
     (?r "Repeat last test run" jest-repeat))
   :max-action-columns 2
@@ -402,7 +402,7 @@ With a prefix argument, allow editing."
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun jest-function (file testname &optional args)
+(defun jest-test (file testname &optional args)
   "Run jest on the test function where pointer is located.
 
 When pointer is not inside a test function jest is run on the whole file."
