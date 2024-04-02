@@ -1,3 +1,5 @@
+(require 'cc-defs)
+
 (defconst jest--brackets '((?\( ?\)) (?{ ?}) (?\[ ?\]) (?< ?>)))
 (defconst jest--quotes '(?\' ?\" ?\`))
 (defconst jest--blank-line-begin "^[\t\s]*")
