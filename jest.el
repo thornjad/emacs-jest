@@ -1,11 +1,11 @@
 ;;; jest.el --- helpers to run jest -*- lexical-binding: t; -*-
 
 ;; Author: Jade Michael Thornton
-;; Author: Edmund Miller <edmund.a.miller@gmail.com>
+;; Based on work by Edmund Miller
 ;; URL:  https://github.com/thornjad/emacs-jest/
 ;; Version: 0.2.0
 ;; Keywords: jest, javascript, testing
-;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (magit-popup "2.12.0") (s "1.12.0") (js2-mode "20180301") (cl-lib "0.6.1"))
+;; Package-Requires: ((emacs "24.4") (dash "2.19.1") (magit-popup "2.13.3") (s "1.13.0") (js2-mode "20231224"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -23,22 +23,19 @@
 
 ;; This package provides helpers to run jest.
 ;;
-;; The main command is jest-popup, which will show a
-;; dispatcher menu, making it easy to change various options and
-;; switches, and then run jest using one of the actions.
+;; The main command is jest-popup, which will show a dispatcher menu, making it easy to change
+;; various options and switches, and then run jest using one of the actions.
 ;; - jest (run all tests)
 ;; - jest-file (current file)
-;; - jest-file-dwim (‘do what i mean’ for current file)
+;; - jest-test (closest it, test or describe)
 ;; - jest-last-failed (rerun previous failures)
 ;; - jest-repeat (repeat last invocation)
 ;;
-;; A prefix argument causes the generated command line to be offered
-;; for editing, and various customization options influence how some
-;; of the commands work. See the README.org for detailed information.
+;; A prefix argument causes the generated command line to be offered for editing, and various
+;; customization options influence how some of the commands work.
 
 ;;; Code:
 
-(require 'cl-lib)
 (require 'dash)
 (require 's)
 
