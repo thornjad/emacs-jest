@@ -91,29 +91,6 @@ This is useful when working on multiple projects simultaneously."
   :group 'jest
   :type 'boolean)
 
-(defcustom jest-strict-test-name-matching nil
-  "Whether to require a strict match for the ‘test this function’ heuristic.
-
-This influences the ‘test this function’ behaviour when editing a
-non-test function, e.g. ‘foo()’.
-
-When nil (the default), the current function name will be used as
-a pattern to run the corresponding tests, which will match
-‘test_foo()’ as well as ‘test_foo_xyz()’.
-
-When non-nil only ‘test_foo()’ will match, and nothing else."
-  :group 'jest
-  :type 'boolean)
-
-(defcustom jest-unsaved-buffers-behavior 'ask-all
-  "Whether to ask whether unsaved buffers should be saved before running jest."
-  :group 'jest
-  :type '(choice (const :tag "Ask for all project buffers" ask-all)
-                 (const :tag "Ask for current buffer" ask-current)
-                 (const :tag "Save all project buffers" save-all)
-                 (const :tag "Save current buffer" save-current)
-                 (const :tag "Ignore" nil)))
-
 (defvar jest--history nil
   "History for jest invocations.")
 
