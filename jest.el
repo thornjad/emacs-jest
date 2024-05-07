@@ -182,8 +182,8 @@ This is useful when working on multiple projects simultaneously."
   (let ((text (string-join
                (reverse (split-string (buffer-substring-no-properties 1 (line-end-position)) "\n"))
                "\n")))
-    (when (string-match "^[\t\s]*\\(?:test\\|it\\|describe\\)\([\'\"]\\(.*?\\)[\'\"]" text)
-      (match-string 1 text))))
+    (when (string-match "^[\t\s]*\\(?:test\\|it\\|describe\\)\(\\(\'\\|\"\\)\\(.*?\\)\\1" text)
+      (match-string 2 text))))
 
 (defun jest--get-buffer ()
   "Get a create a suitable compilation buffer."
