@@ -384,6 +384,7 @@ With a prefix argument, allow editing."
 
 ;;;###autoload
 (defun jest-file-inspect (file &optional args)
+  "Run jest on FILE, in inspect-brk mode."
   (interactive
    (list
     (buffer-file-name)
@@ -405,6 +406,7 @@ When pointer is not inside a test function jest is run on the whole file."
 
 ;;;###autoload
 (defun jest-test-inspect (file testname &optional args)
+  "Run jest on the test function where pointer is located, in inspect-brk mode."
   (interactive
    (list (buffer-file-name) (jest--closest-test-name) (jest-arguments)))
   (jest-test file testname args t))
@@ -423,6 +425,7 @@ With a prefix argument, allow editing."
 
 ;;;###autoload
 (defun jest-last-failed-inspect (&optional args)
+  "Run jest, only executing previous test failures, in inspect-brk mode."
   (interactive (list (jest-arguments)))
   (jest-last-failed args t))
 
