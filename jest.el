@@ -64,6 +64,11 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'jest
   :type 'string)
 
+(defcustom jest-inspect-executable "npx --node-options=--inspect-brk --no-install jest"
+  "The Jest executable with inspect option passed to Node."
+  :group 'jest
+  :type 'string)
+
 (defcustom jest-setup-hook nil
   "Hooks to run before a jest process starts."
   :group 'jest
@@ -114,7 +119,7 @@ This is useful when working on multiple projects simultaneously."
   (setq buffer-read-only t)
   (compilation-setup t))
 
-(cl-defun jest--run (&key args file testname edit)
+(cl-defun jest--run (&key args file testname edit inspect)
   "Run jest for the given arguments."
   (let ((popup-arguments args)
 	      command)
@@ -122,17 +127,21 @@ This is useful when working on multiple projects simultaneously."
     (when (and file (file-name-absolute-p file))
       (setq file (jest--relative-file-name file)))
 
+
+    (when inspect
+      (setq args (-snoc args "--runInBand")))
     (when file
       (setq args (-snoc args (shell-quote-argument file))))
     (when testname
       (setq args (-snoc args "--testNamePattern" (shell-quote-argument testname))))
 
-    (setq args (cons jest-executable args) command (s-join " " args))
-
-    (jest--run-command
-     :command command
-     :popup-arguments popup-arguments
-     :edit edit)))
+    (let* ((executable (if inspect jest-inspect-executable jest-executable))
+           (args (cons executable args))
+           (command (s-join " " args)))
+      (jest--run-command
+       :command command
+       :popup-arguments popup-arguments
+       :edit edit))))
 
 (cl-defun jest--run-command (&key command popup-arguments edit)
   "Run a jest command line."
@@ -354,17 +363,7 @@ This goes from pointer position upwards."
   :default-action 'jest-repeat)
 
 ;;;###autoload
-(defun jest (&optional args)
-  "Run jest with ARGS.
-
-With a prefix argument, allow editing."
-  (interactive (list (jest-arguments)))
-  (jest--run
-   :args args
-   :edit current-prefix-arg))
-
-;;;###autoload
-(defun jest-file (file &optional args)
+(defun jest-file (file &optional args inspect)
   "Run jest on FILE, using ARGS.
 
 Additional ARGS are passed along to jest.
@@ -376,22 +375,38 @@ With a prefix argument, allow editing."
   (jest--run
    :args args
    :file file
+   :inspect inspect
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun jest-test (file testname &optional args)
+(defun jest-file-inspect (file &optional args)
+  (interactive
+   (list
+    (buffer-file-name)
+    (jest-arguments)))
+  (jest-file file args t))
+
+;;;###autoload
+(defun jest-test (file testname &optional args inspect)
   "Run jest on the test function where pointer is located.
 
 When pointer is not inside a test function jest is run on the whole file."
   (interactive
-   (list (buffer-file-name) (jest--closest-test-name) (jest-arguments)))
+   (list (buffer-file-name) (jest--closest-test-name) (jest-arguments) nil))
   (jest--run
    :args args
    :file file
+   :inspect inspect
    :testname testname))
 
 ;;;###autoload
-(defun jest-last-failed (&optional args)
+(defun jest-test-inspect (file testname &optional args)
+  (interactive
+   (list (buffer-file-name) (jest--closest-test-name) (jest-arguments)))
+  (jest-test file testname args t))
+
+;;;###autoload
+(defun jest-last-failed (&optional args inspect)
   "Run jest, only executing previous test failures.
 
 Additional ARGS are passed along to jest.
@@ -399,7 +414,13 @@ With a prefix argument, allow editing."
   (interactive (list (jest-arguments)))
   (jest--run
    :args (-snoc args "--last-failed")
+   :inspect inspect
    :edit current-prefix-arg))
+
+;;;###autoload
+(defun jest-last-failed-inspect (&optional args)
+  (interactive (list (jest-arguments)))
+  (jest-last-failed args t))
 
 ;;;###autoload
 (defun jest-repeat ()
