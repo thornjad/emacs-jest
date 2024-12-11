@@ -2,6 +2,7 @@
 
 ;; Author: Jade Michael Thornton
 ;; Copyright (c) 2024 Jade Michael Thornton
+;; Copyright (c) 2019-2022 Edmund Miller, Hyeonjun Park and contributors
 ;; Based on work by Edmund Miller and Hyeonjun Park
 ;; URL:  https://github.com/thornjad/emacs-jest/
 ;; Version: 0.2.0
