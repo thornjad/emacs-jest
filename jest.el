@@ -1,7 +1,8 @@
 ;;; Jest.el --- helpers to run jest -*- lexical-binding: t; -*-
 
 ;; Author: Jade Michael Thornton
-;; Based on work by Edmund Miller
+;; Copyright (c) 2024 Jade Michael Thornton
+;; Based on work by Edmund Miller and Hyeonjun Park
 ;; URL:  https://github.com/thornjad/emacs-jest/
 ;; Version: 0.2.0
 ;; Keywords: tools
@@ -24,11 +25,13 @@
 ;;
 ;; The main command is jest-popup, which will show a dispatcher menu, making it easy to change
 ;; various options and switches, and then run jest using one of the actions.
-;; - jest (run all tests)
 ;; - jest-file (current file)
 ;; - jest-test (closest it, test or describe)
 ;; - jest-last-failed (rerun previous failures)
 ;; - jest-repeat (repeat last invocation)
+;;
+;; Each of these commands (except jest-repeat) also has an inspection version, `jest-file-inspect',
+;; etc. which enable Node inspect-brk mode.
 ;;
 ;; A prefix argument causes the generated command line to be offered for editing, and various
 ;; customization options influence how some of the commands work.

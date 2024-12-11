@@ -8,11 +8,13 @@ This package is based on [[https://github.com/edmundmiller/emacs-jest][Edmund Mi
 The main command is jest-popup, which will show a dispatcher menu, making it easy to change various
 options and switches, and then run jest using one of the actions.
 
-- jest (run all tests)
 - jest-file (current file)
 - jest-test (the nearest =it=, =test= or =describe= to where the pointer is now)
 - jest-last-failed (rerun previous failures)
 - jest-repeat (repeat last invocation)
+
+Each of these commands (except jest-repeat) also has an inspection version, jest-file-inspect, etc.
+which enable Node inspect-brk mode.
 
 A prefix argument causes the generated command line to be offered for editing, and various
 customization options influence how some of the commands work. information.
