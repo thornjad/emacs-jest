@@ -16,3 +16,7 @@ which enable Node inspect-brk mode.
 
 A prefix argument causes the generated command line to be offered for editing, and various
 customization options influence how some of the commands work. information.
+
+---
+
+Found this useful? [Buy me a coffee!](https://buymeacoffee.com/jademichaelthornton)
